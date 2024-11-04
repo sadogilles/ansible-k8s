@@ -1,0 +1,40 @@
+---
+- name: Create Temporary Helm Directory
+  ansible.builtin.tempfile:
+    state: directory
+    suffix: helm
+  register: tempdir
+
+- name: Download Helm Binary
+  ansible.builtin.get_url:
+    url: "https://get.helm.sh/helm-{{ helm_version }}-linux-amd64.tar.gz"
+    dest: "{{ tempdir.path }}"
+    mode: '0755'
+
+- name: Unarchive Helm Binary
+  ansible.builtin.unarchive:
+    src: "{{ tempdir.path }}/helm-{{ helm_version }}-linux-amd64.tar.gz"
+    dest: "{{ tempdir.path }}"
+    remote_src: true
+
+- name: Copy Helm Binary
+  become: true
+  ansible.builtin.copy:
+    src: "{{ tempdir.path }}/linux-amd64/helm"
+    dest: /usr/local/bin
+    mode: '0755'
+    remote_src: true
+
+- name: Verify Helm Installation
+  ansible.builtin.command: helm version
+  register: helm_version_output
+  changed_when: false
+
+- name: Fail If Helm Isnot installed
+  ansible.builtin.fail:
+    msg: "Helm is not installed."
+  when: helm_version_output.rc != 0
+
+- name: Display Install Helm Version
+  ansible.builtin.debug:
+    var: "{{ helm_version_output.stdout }}"
