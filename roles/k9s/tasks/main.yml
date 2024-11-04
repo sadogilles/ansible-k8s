@@ -1,0 +1,18 @@
+---
+- name: Display the k9s version to be installed (installation via apt)
+  ansible.builtin.debug:
+    msg: "Installing k9s version {{ k9s_version }}"
+
+- name: Install k9s package
+  become: true
+  ansible.builtin.apt:
+    deb: "https://github.com/derailed/k9s/releases/download/{{ k9s_version }}/k9s_Linux_amd64.deb"
+
+- name: Verify K9s Installation
+  ansible.builtin.command: k9s version
+  register: k9s_version_output
+  changed_when: false
+
+- name: Display installed k9s version
+  ansible.builtin.debug:
+    msg: "{{ k9s_version_output.stdout }}"
