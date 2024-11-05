@@ -17,5 +17,5 @@ This project automates the deployment of a Kubernetes environment and essential 
 ## Usage
 1. Install the tools by running:
    ```bash
-   ansible-playbook install-tools.yml
+   ansible-playbook -i inventory install-tools.yml --ask-become
    ```
