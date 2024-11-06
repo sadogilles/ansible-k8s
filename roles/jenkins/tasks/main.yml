@@ -43,4 +43,4 @@
 
 - name: Show Admin Password
   ansible.builtin.debug:
-    msg: "{{ admin_password.stdout }}"
+    msg: "username: admin password: {{ admin_password.stdout }}"
